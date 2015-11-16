@@ -1,0 +1,94 @@
+---
+title: "MAT iris"
+author: "Sofian Hamiti"
+output: pdf_document
+---
+
+#Introduction
+The Iris dataset contains 150 instances, corresponding to three 
+equally-frequent species of iris plant (Iris setosa, Iris versicolour, and Iris virginica).
+
+This project has been built in 2 parts, using R:
+
+- This presentation document 
+
+- A ShinyApp to retrieve the 10 most similar observations to the inputted vector
+
+
+#The Data
+## Loading the data:
+```{r, message = FALSE, results='hide', warning=FALSE}
+library("ggplot2")
+library("gridExtra")
+source("cleandata.R")
+
+#Load the dataset from the website and assign names to columns
+iris <- read.csv(url("http://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data")) 
+colnames(iris) <- c("Sepal.Length", "Sepal.Width", "Petal.Length", "Petal.Width", "Species")
+```
+
+##Simple data quality assessment
+```{r}
+#Number of NA values in the dataset
+sum(is.na(iris))
+
+#Show the duplicate values
+subset(iris, duplicated(iris))
+
+#Call the cleanData function in order to remove NAs, Duplicates, and Negative values.
+iris <- cleanData(iris)
+```
+
+##Analysis of the Tidy dataset
+```{r}
+#Number of observations and the attributes' data types
+str(iris)
+#Distribution of species
+table(iris$Species)
+#Summary statistics of the flowers' specs from which 
+#I have defined the extreme values to input in the shinyapp.
+summary(iris[,-5])
+```
+
+
+#Exploratory analysis
+```{r}
+#As we can see in the charts, in future developments, it may be interesting to 
+#cluster the observations using their Petal specs.
+```
+```{r, echo=FALSE}
+plot_sepal <- ggplot(iris, aes(x=Sepal.Length, y=Sepal.Width, colour=Species)) +
+        geom_point() +
+        ggtitle("Distribution of Sepal.Length~Sepal.Width")
+plot_petal <- ggplot(iris, aes(x=Petal.Length, y=Petal.Width, colour=Species)) +
+        geom_point() +
+        ggtitle("Distribution of Petal.Length~Petal.Width")
+grid.arrange(plot_sepal, plot_petal, nrow=2)
+```
+
+
+#The ShinyApp
+The app has been built using R and has the following functionalities:
+
+- Reads in the data, accessed from: https://archive.ics.uci.edu/ml/datasets/Iris;
+
+- Clean the data  using the cleanData function.
+
+- Takes as arguments, attributes defining a new species of Iris plant with the use of sliders. 
+        Sliders helped me to protect the app from unrealistic inputs.
+
+- Returns the ten most similar data points in the existing Iris data based on the euclidean distance from the inputted vector.
+
+- Displays the results in a table.
+
+The code is available on my github repository:
+https://github.com/SofianHamiti/MAT_iris
+
+The ShinyApp:
+https://sofianhamiti.shinyapps.io/MAT_iris
+
+#Future Possible Improvements
+
+- Improve the accuracy of the calculation. Cosine Similarity may be a good start of research.
+
+- Visualize the output in a plot to have a more intuitive vision of the distance calculated.
